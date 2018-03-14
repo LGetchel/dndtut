@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import { DropTarget } from 'react-dnd'
 import ItemTypes from './ItemTypes'
+import update from 'immutability-helper'
 
 const style = {
 	height: '12rem',
@@ -28,13 +29,38 @@ function collect(connect, monitor) {
       isOver: monitor.isOver()
     };
   }
+
+  
   
 class Dustbin extends Component {
-	static propTypes = {
+    constructor(props){
+        super(props);
+        this.state= {box: props.name}
+    }
+
+    pushBox(box){
+        this.setState(update(this.state, {
+            boxes: {
+                $push: [box]
+            }
+        }));
+    }
+
+    removeBox(index){
+        this.setState(update(this.state, {
+            boxes: {
+                $splice: [
+                    [index, 1]
+                ]
+            }
+        }));
+    }
+
+    static propTypes = {
 		connectDropTarget: PropTypes.func.isRequired,
 		isOver: PropTypes.bool.isRequired,
 		canDrop: PropTypes.bool.isRequired,
-	}
+    }
 
 	render() {
 		const { canDrop, isOver, connectDropTarget } = this.props
